@@ -11,14 +11,14 @@ public class YearlyCityData {
     private int year;
 
     // Each of the array lists holds data for each day of the year
-    private ArrayList<Double> rainfall; // centimeters
+    public ArrayList<Double> rainfall; // centimeters
 
     // All temperatures celcius
-    private ArrayList<Double> temperatureHighs;
-    private ArrayList<Double> temperatureLows;
-    private ArrayList<Double> temperatureAverages;
-    private ArrayList<Double> humidity; // make up your own scale?
-    private ArrayList<Double> clouds; // 0 is sunny, 100 is very cloudy
+    public ArrayList<Double> temperatureHighs;
+    public ArrayList<Double> temperatureLows;
+    public ArrayList<Double> temperatureAverages;
+    public ArrayList<Double> humidity; // make up your own scale?
+    public ArrayList<Double> clouds; // 0 is sunny, 100 is very cloudy
 
     public void setRainfallData(ArrayList<Double> rainfallData) {
         this.rainfall = rainfallData;
