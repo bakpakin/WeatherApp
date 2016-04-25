@@ -215,12 +215,12 @@ public class WeatherData {
         }
 */
         Calendar c = Calendar.getInstance();
-        Calendar.set(Calendar.DAY_OF_YEAR, minIndex+1);
+        c.set(Calendar.DAY_OF_YEAR, minIndex+1);
         int startDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
         int startMonthOfYear = c.get(Calendar.MONTH);
 
         Calendar d = Calendar.getInstance();
-        Calendar.set(Calendar.DAY_OF_YEAR, minIndex+1+days_of_travel);
+        d.set(Calendar.DAY_OF_YEAR, minIndex+1+days_of_travel);
 
         int endDayOfMonth = d.get(Calendar.DAY_OF_MONTH);
         int endMonthOfYear = d.get(Calendar.MONTH);
