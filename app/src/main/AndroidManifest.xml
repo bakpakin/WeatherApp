@@ -4,17 +4,31 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/palmtree"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+    <activity
+        android:name=".splash"
+        android:label="@string/app_name">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+    <activity android:name=".MainActivity">
+        <intent-filter>
+
+            <category android:name="android.intent.category.MAINACTIVITY" />
+        </intent-filter>
+    </activity>
+    <activity android:name=".DisplayIdealDates">
+        <meta-data
+            android:name="android.support.MainActivity"
+            android:value="com.example.thomas.weatherapp" />
+    </activity>
+
     </application>
 
 </manifest>
