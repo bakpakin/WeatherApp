@@ -73,12 +73,11 @@ public class WeatherData {
     }
 
 
-    public static void doTest() {
-
+    public static ArrayList<Calendar> doTest(String a, String b, String c) {
         //input ideal temp, number of travel days and the city to travel to from app screen
-        int ideal_temp = 65; //change this later
-        int days_of_travel = 7; // change this later
-        String destination_city = "Boston"; //change this later
+        int ideal_temp = Integer.parseInt(a);
+        int days_of_travel = Integer.parseInt(b);
+        String destination_city = c;
 
         //Get 5 years of weather data from destination_city
         int year = 2016;
@@ -214,16 +213,19 @@ public class WeatherData {
             day = minIndex-333;
         }
 */
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_YEAR, minIndex+1);
-        int startDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
-        int startMonthOfYear = c.get(Calendar.MONTH);
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(Calendar.DAY_OF_YEAR, minIndex+1);
+        int startDayOfMonth = cal1.get(Calendar.DAY_OF_MONTH);
+        int startMonthOfYear = cal1.get(Calendar.MONTH);
 
         Calendar d = Calendar.getInstance();
         d.set(Calendar.DAY_OF_YEAR, minIndex+1+days_of_travel);
 
         int endDayOfMonth = d.get(Calendar.DAY_OF_MONTH);
         int endMonthOfYear = d.get(Calendar.MONTH);
-
+        ArrayList<Calendar>  travel_days = new ArrayList(2);
+        travel_days.set(1, cal1);
+        travel_days.set(1, d);
+    return travel_days;
     }
 }
