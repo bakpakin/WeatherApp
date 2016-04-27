@@ -37,11 +37,8 @@ public class BackendConnector  {
         queue = Volley.newRequestQueue(c);
     }
 
+    // Use dummy local data for now.
     public void getCityDataByName(String name, int year, YearlyBackendListener l) {
-        getCityDataByID(0, year, l);
-    }
-
-    public void getCityDataByID(int id, int year, YearlyBackendListener l) {
         ArrayList<Double> htemp = new ArrayList<>();
         ArrayList<Double> ptemp = new ArrayList<>();
         for (int i = 0; i < DummyData.temp.length; i++) {

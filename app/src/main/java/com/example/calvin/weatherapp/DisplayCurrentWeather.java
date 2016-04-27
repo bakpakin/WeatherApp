@@ -30,8 +30,13 @@ public class DisplayCurrentWeather extends AppCompatActivity {
         BackendConnector.instance().getWeatherByName(city, new CurrentBackendListener() {
             @Override
             public void onCurrentDataReceived(CurrentCityData data) {
-                description.setText(data.description);
-                temperature.setText(Integer.toString((int)data.temp) + "\u00b0C");
+                if (data == null) {
+                    description.setText("no data found");
+                    temperature.setText("??");
+                } else {
+                    description.setText(data.description);
+                    temperature.setText(Integer.toString((int) data.temp) + "\u00b0C");
+                }
             }
         });
 

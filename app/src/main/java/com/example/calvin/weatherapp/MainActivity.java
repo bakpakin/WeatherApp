@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisplayIdealDates.class);
 
         String string_days = user_input.getText().toString();
+        if (string_days.length() == 0) return;
         intent.putExtra(days_s,string_days);
 
         String user_temp = Tempfinal.getText().toString();
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(ppt_s,user_rain);
 
         String city = CityName.getText().toString();
+        if (city.length() == 0) return;
         intent.putExtra(city_name,city);
 
         startActivity(intent);
@@ -98,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
     public void get_current_weather(View view) {
         Intent intent = new Intent(this, DisplayCurrentWeather.class);
         String city = CityName.getText().toString();
+        if (city.length() == 0) {
+            return;
+        }
         intent.putExtra(city_name,city);
         startActivity(intent);
     }
