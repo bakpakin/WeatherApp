@@ -6,9 +6,9 @@ It also gets the current weather because why not.
 
 ## Screenshots
 
-![Current Weather]()
-![Ideal Vacations]()
-![Main Page]()
+![Current Weather](https://raw.githubusercontent.com/bakpakin/WeatherApp/master/images/Current%20Weather%20Page.png)
+![Ideal Vacations](https://raw.githubusercontent.com/bakpakin/WeatherApp/master/images/Ideal%20Vacation%20Dates.png)
+![Main Page](https://raw.githubusercontent.com/bakpakin/WeatherApp/master/images/User%20Input%20Page.png)
 
 ## Code
 
