@@ -48,13 +48,12 @@ public class WeatherData {
         rainfall.set(day, inches);
     }
 
-    public static void getDates(final double ideal_temp, final int days_of_travel, String destination_city, final VacationIntervalListener listener) {
+    public static void getDates(final double ideal_temp, final double ideal_rain, final int days_of_travel, String destination_city, final VacationIntervalListener listener) {
 
         final int currentYear = 2016;
         final int numberOfReferenceYears = 5;
-        final double ideal_rain = 0;
-        final double rain_multiplier = 2.0;
-        final double temp_multiplier = 1.0;
+        final double rain_multiplier = 3.0;
+        final double temp_multiplier = 2.0;
 
         YearlyBackendListener l = new YearlyBackendListener() {
 

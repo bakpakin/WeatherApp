@@ -26,13 +26,14 @@ public class DisplayIdealDates extends AppCompatActivity {
         Intent intent = getIntent();
         int num_days = Integer.parseInt(intent.getStringExtra(MainActivity.days_s));
         double user_temp = Double.parseDouble(intent.getStringExtra(MainActivity.temp_s));
+        double user_rain = Double.parseDouble(intent.getStringExtra(MainActivity.ppt_s));
         String user_city = intent.getStringExtra(MainActivity.city_name);
 
         // Get the references to the views
         startDate = (TextView) findViewById(R.id.firstdate);
         endDate = (TextView) findViewById(R.id.seconddate);
 
-        WeatherData.getDates(user_temp, num_days, user_city, new VacationIntervalListener() {
+        WeatherData.getDates(user_temp, user_rain, num_days, user_city, new VacationIntervalListener() {
             @Override
             public void onIntervalReceived(ArrayList<Calendar> interval) {
                 Calendar start = interval.get(0);

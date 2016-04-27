@@ -64,8 +64,9 @@ public class BackendConnector  {
                     JSONObject mainInfo = currentWeather.getJSONObject("main");
                     JSONObject weather = currentWeather.getJSONArray("weather").getJSONObject(0);
                     double tempCelcius = mainInfo.getDouble("temp") - 273.15;
+                    String name = response.getJSONObject("city").getString("name");
                     String description = weather.getString("description");
-                    listener.onCurrentDataReceived(new CurrentCityData(tempCelcius, description));
+                    listener.onCurrentDataReceived(new CurrentCityData(name, tempCelcius, description));
                 } catch (JSONException e) {
                     Log.d("JSON Error", e.getMessage());
                 }
