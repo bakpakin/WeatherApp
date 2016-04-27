@@ -73,17 +73,6 @@ public class YearlyCityData {
         return temperatureHighs.get(day);
     }
 
-    public DayCityData getDay(int day) {
-        DayCityData data = new DayCityData();
-        data.setClouds(getClouds(day));
-        data.setHumidity(getHumidity(day));
-        data.setRainfall(getRainfall(day));
-        data.setTemperatureAverages(getTemperatureAverages(day));
-        data.setTemperatureHighs(getTemperatureHighs(day));
-        data.setTemperatureLows(getTemperatureLows(day));
-        return data;
-    }
-
     public int getYear() {
         return year;
     }

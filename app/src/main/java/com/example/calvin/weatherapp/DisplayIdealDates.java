@@ -1,36 +1,50 @@
 package com.example.calvin.weatherapp;
 
 import android.content.Intent;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class DisplayIdealDates extends AppCompatActivity {
 
-    private TextView days;
-    private TextView temp;
-    private TextView city;
+    private TextView startDate;
+    private TextView endDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_ideal_dates);
+
+        // Get the info entered by the user
         Intent intent = getIntent();
-        String num_days = intent.getStringExtra(MainActivity.days_s);
-        String user_temp = intent.getStringExtra(MainActivity.temp_s);
-        String user_ppt = intent.getStringExtra(MainActivity.ppt_s);
+        int num_days = Integer.parseInt(intent.getStringExtra(MainActivity.days_s));
+        double user_temp = Double.parseDouble(intent.getStringExtra(MainActivity.temp_s));
         String user_city = intent.getStringExtra(MainActivity.city_name);
 
-        /*days = (TextView) findViewById(R.id.num_days);
-        days.setText(num_days);
+        // Get the references to the views
+        startDate = (TextView) findViewById(R.id.firstdate);
+        endDate = (TextView) findViewById(R.id.seconddate);
 
-        temp = (TextView) findViewById(R.id.user_temp);
-        temp.setText(user_temp);
+        WeatherData.getDates(user_temp, num_days, user_city, new VacationIntervalListener() {
+            @Override
+            public void onIntervalReceived(ArrayList<Calendar> interval) {
+                Calendar start = interval.get(0);
+                Calendar end = interval.get(1);
+                startDate.setText(stringifyDate(start));
+                endDate.setText(stringifyDate(end));
+            }
+        });
 
-        ppt = (TextView) findViewById(R.id.user_ppt);
-        ppt.setText(user_ppt)
+    }
 
-        city = (TextView) findViewById(R.id.user_city);
-        city.setText(user_city);*/
-
+    private String stringifyDate(Calendar cal) {
+        return new SimpleDateFormat("MMMM d", Locale.getDefault()).format(cal.getTime());
     }
 }
