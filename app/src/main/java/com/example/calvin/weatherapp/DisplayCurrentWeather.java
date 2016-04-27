@@ -35,7 +35,7 @@ public class DisplayCurrentWeather extends AppCompatActivity {
                     temperature.setText("??");
                 } else {
                     description.setText(data.description);
-                    temperature.setText(Integer.toString((int) data.temp) + "\u00b0C");
+                    temperature.setText(Integer.toString((int) data.temp) + "\u00b0F");
                     cityName.setText(data.name);
                 }
             }
