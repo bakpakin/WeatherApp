@@ -1,17 +1,15 @@
 package com.example.calvin.weatherapp;
 
-import com.android.volley.Network;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.BasicNetwork;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +23,7 @@ public class BackendConnector  {
     private static final String apibase = "https://cowweather.herokuapp.com/";
     private static BackendConnector instance = null;
 
-    private RequestQueue requestQueue;
+    public static BackendConnector instance() {
         return instance;
     }
 
@@ -60,7 +58,7 @@ public class BackendConnector  {
     }
 
     public void getWeatherByName(String name, final CurrentBackendListener listener) {
-        queue.add(new CustomRequest(apibase  + name, null, new Response.Listener<JSONObject>() {
+        queue.add(new CustomRequest(apibase + Uri.encode(name), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
