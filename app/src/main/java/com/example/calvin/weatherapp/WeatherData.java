@@ -1,53 +1,33 @@
 package com.example.calvin.weatherapp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 
 public class WeatherData {
+
     //fields
     public ArrayList<Double> temps;
     public ArrayList<Double> rainfall;
+    public boolean leapyear;
 
-    //constructors
-    public WeatherData(){
-        temps = null;
-        rainfall = null;
+    public WeatherData() {
+        this(new ArrayList<Double>(366), new ArrayList<Double>(366));
+        for (int i = 0; i < 366; i++) {
+            temps.add(0.0);
+            rainfall.add(0.0);
+        }
     }
 
-    public WeatherData(String city){
-        temps.add(1.1); //fetch temps from city this year;
-        temps.add(1.1);
-        temps.add(1.1);
-        temps.add(1.1);
-        temps.add(1.1);
-        rainfall.add(1.1); //fetch rainfall from city this year;
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-    }
-
-    public WeatherData(String city, int year){
-        temps.add(1.1); //fetch temps from city this year;
-        temps.add(1.1);
-        temps.add(1.1);
-        temps.add(1.1);
-        temps.add(1.1);
-        rainfall.add(1.1); //fetch rainfall from city this year;
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-        rainfall.add(1.1);
-    }
-
-    public WeatherData(ArrayList<Double> my_temperatures, ArrayList<Double> my_rainfall){
+    public WeatherData(ArrayList<Double> my_temperatures, ArrayList<Double> my_rainfall) {
         temps = my_temperatures;
         rainfall = my_rainfall;
+        leapyear = false;
     }
 
     // methods
     public double get_temp(int day) {
-        double day_temp = temps.get(day);
-        return day_temp;
+        return temps.get(day);
     }
 
     public ArrayList<Double> get_temp() {
@@ -55,92 +35,132 @@ public class WeatherData {
     }
 
     public double get_rain(int day) {
-        double day_rain = rainfall.get(day);
-        return day_rain;
-    }
-
-    public void set_temp(double degrees, int day) {
-        temps.add(day, degrees);
-    }
-
-    public void set_rain(double inches, int day) {
-        rainfall.add(day, inches);
+        return rainfall.get(day);
     }
 
     public ArrayList<Double> get_rain() {
         return rainfall;
     }
 
-    public WeatherData add(WeatherData weather){
-        WeatherData weather_sum = null;
-
-        return weather_sum;
+    public void set_temp(double degrees, int day) {
+        temps.set(day, degrees);
     }
 
-    public WeatherData average(WeatherData weather){
-        WeatherData avg_weather = null;
-        return avg_weather;
+    public void set_rain(double inches, int day) {
+        rainfall.set(day, inches);
     }
 
-    public static void doTest() {
+    public static void getDates(final double ideal_temp, final int days_of_travel, String destination_city, final VacationIntervalListener listener) {
 
-        //input ideal temp, number of travel days and the city to travel to from app screen
-        int ideal_temp = 65; //change this later
-        int days_of_travel = 7; // change this later
-        String destination_city = "Boston"; //change this later
+        final int currentYear = 2016;
+        final int numberOfReferenceYears = 5;
 
-        //Get 5 years of weather data from destination_city
-        int year = 2016;
-        WeatherData year1 = new WeatherData(destination_city, year);
-        WeatherData year2 = new WeatherData(destination_city, year-1);
-        WeatherData year3 = new WeatherData(destination_city, year-2);
-        WeatherData year4 = new WeatherData(destination_city, year-3);
-        WeatherData year5 = new WeatherData(destination_city, year-4);
+        YearlyBackendListener l = new YearlyBackendListener() {
 
-        WeatherData five_yr_avg = new WeatherData();
-        for (int i = 0; i<365; i++){
-            double rain_day = (year1.get_rain(i) + year2.get_rain(i) + year3.get_rain(i) + year4.get_rain(i) + year5.get_rain(i)) /5;
-            double temp_day = (year1.get_temp(i) + year2.get_temp(i) + year3.get_temp(i) + year4.get_temp(i) + year5.get_temp(i))/ 5;
-            five_yr_avg.set_rain(rain_day,i);
-            //five_yr_avg.set_temps(temp_day, i);
-        }
+            private int yearsReceived = 0;
+            private WeatherData[] multiYearData = new WeatherData[numberOfReferenceYears];
 
-        //Moving average to find best days_of_travel
-        //MA = (Day-n + Day-(n+1) + ...+ Day + Day+1 + ... + Day+n)/2*n
+            @Override
+            public void onCityDataReceived(YearlyCityData data) {
 
+                WeatherData wd = new WeatherData(data.temperatureHighs, data.rainfall);
+                multiYearData[currentYear - data.getYear()] = wd;
+                yearsReceived++;
 
-        //Temp moving average
+                // If all of the data for each year has been retrieved...
+                if (yearsReceived >= numberOfReferenceYears) {
 
-        for(int i = 0; i < 365; i++) {
-            if (i < days_of_travel) {
+                    WeatherData five_yr_avg = new WeatherData();
+                    for (int i = 0; i < 365; i++) {
+                        double temp_day = 0;
+                        double rain_day = 0;
+                        for (int j = 0; j < numberOfReferenceYears; j++) {
+                            rain_day += multiYearData[j].get_rain(i);
+                            temp_day += multiYearData[j].get_temp(i);
+                        }
+                        five_yr_avg.set_rain(rain_day / numberOfReferenceYears, i);
+                        five_yr_avg.set_temp(temp_day / numberOfReferenceYears, i);
+                    }
+                    //Moving average to find best days_of_travel
+                    //MA = (Day-n + Day-(n+1) + ...+ Day + Day+1 + ... + Day+n)/2*n
 
+                    WeatherData moving_average = new WeatherData();
+                    //Temp moving average
+
+                    double temp_initialize = five_yr_avg.get_temp(0);
+                    ArrayList<Double> temp_window = new ArrayList<>(Collections.nCopies(days_of_travel, 0.0));
+                    for (int k = 0; k < days_of_travel; k++) {
+                        temp_window.set(k, temp_initialize);
+                    }
+                    double temp_avg;
+                    for (int i = 0; i < 365; i++) {
+                        temp_window.remove(0);
+                        temp_window.add(five_yr_avg.get_temp(i));
+                        Double temp_sum = 0.0;
+
+                        for (int j = 0; j < days_of_travel; j++) {
+                            temp_sum += temp_window.get(j);
+                        }
+                        temp_avg = temp_sum / days_of_travel;
+                        moving_average.set_temp(temp_avg, i);
+
+                    }
+
+                    //Rain moving average
+                    Double rain_initialize = five_yr_avg.get_rain(0);
+                    ArrayList<Double> rain_window = new ArrayList<>(Collections.nCopies(365, 0.0));
+                    for (int k = 0; k < days_of_travel; k++) {
+                        rain_window.set(k, rain_initialize);
+                    }
+                    Double rain_avg;
+
+                    for (int i = 0; i < 365; i++) {
+                        rain_window.remove(0);
+                        rain_window.add(five_yr_avg.get_rain(i));
+                        Double rain_sum = 0.0;
+                        for (int j = 0; j < days_of_travel; j++) {
+                            rain_sum += rain_window.get(j);
+                        }
+                        rain_avg = rain_sum / days_of_travel;
+                        moving_average.set_rain(rain_avg, i);
+                    }
+
+                    //Return ideal travel days to go
+                    ArrayList<Double> temp_difference = new ArrayList<>(Collections.nCopies(365, 0.0));
+                    for (int i = 0; i < 365; i++) {
+                        temp_difference.set(i, moving_average.get_temp(i) - ideal_temp);
+                    }
+                    //1 cm in rain difference is worse than 1 degree in temp difference, so weight rain more heavily.
+                    Double range_temps = Collections.max(moving_average.get_temp()) - Collections.min(moving_average.get_temp());
+                    Double range_rain = Collections.max(moving_average.get_rain()) - Collections.min(moving_average.get_rain());
+                    Double weight = range_temps / range_rain;
+
+                    ArrayList<Double> weighted_rain = new ArrayList<>(Collections.nCopies(365, 0.0));
+                    for (int i = 0; i < 365; i++) {
+                        weighted_rain.set(i, weight * moving_average.get_rain(i));
+                    }
+                    ArrayList<Double> optim_vector = new ArrayList<>(Collections.nCopies(365, 0.0));
+                    for (int i = 0; i < 365; i++) {
+                        optim_vector.set(i, temp_difference.get(i) + weighted_rain.get(i));
+                    }
+                    int minIndex = optim_vector.indexOf(Collections.min(optim_vector));
+
+                    Calendar cal1 = Calendar.getInstance();
+                    cal1.set(Calendar.DAY_OF_YEAR, minIndex + 1);
+                    Calendar d = Calendar.getInstance();
+                    d.set(Calendar.DAY_OF_YEAR, minIndex + 1 + days_of_travel);
+                    ArrayList<Calendar> travel_days = new ArrayList<>();
+                    travel_days.add(cal1);
+                    travel_days.add(d);
+
+                    listener.onIntervalReceived(travel_days);
+                }
             }
-            else {
-                five_yr_avg.get_temp(i);
-            }
+        };
+
+        for (int i = 0; i < numberOfReferenceYears; i++) {
+            BackendConnector.instance().getCityDataByName(destination_city, currentYear - i, l);
         }
-        WeatherData moving_average = new WeatherData();
-
-        int N = 10;
-        double[] a = new double[N];
-        double sum = 0.0;
-        for (int i = 0; i < 365; i++) {
-            sum -= a[i % N];
-            a[i % N] = Math.random();
-            sum += a[i % N];
-            if (i >= N) moving_average.set_temp(sum/N,i);
-        }
-
-
-
-        //Rain moving average
-
-        for(int i = 0; i<365; i++) {
-
-        }
-
-        //Return ideal travel days to go
-
 
     }
 }

@@ -26,87 +26,61 @@ public class BackendConnector  {
     private static BackendConnector instance = null;
 
     private RequestQueue requestQueue;
-
-    private ArrayList<BackendListener> listeners;
+        return instance;
+    }
 
     public static void initInstance(Context c) {
         instance = new BackendConnector(c);
     }
 
-    public static BackendConnector getInstance() {
-        if (instance == null) {
-            System.err.println("Backend connector singleton instance not initialized.");
-        }
-        return instance;
-    }
+    private RequestQueue queue;
 
     private BackendConnector(Context c) {
-        requestQueue = Volley.newRequestQueue(c);
+        queue = Volley.newRequestQueue(c);
     }
 
-    public BackendListener addListener(BackendListener listener) {
-        listeners.add(listener);
-        return listener;
+    public void getCityDataByName(String name, int year, YearlyBackendListener l) {
+        getCityDataByID(0, year, l);
     }
 
-    private YearlyCityData parseHistoryData(JSONObject obj) throws JSONException {
-        // TODO
-        // This is the meat of this class. Converts the JSON data into a YearlyCityObject.
-        return null;
+    public void getCityDataByID(int id, int year, YearlyBackendListener l) {
+        ArrayList<Double> htemp = new ArrayList<>();
+        ArrayList<Double> ptemp = new ArrayList<>();
+        for (int i = 0; i < DummyData.temp.length; i++) {
+            htemp.add(DummyData.temp[i]);
+        }
+        for (int i = 0; i < DummyData.precip.length; i++) {
+            ptemp.add(DummyData.precip[i]);
+        }
+        YearlyCityData data = new YearlyCityData();
+        data.setYear(year);
+        data.setTemperatureHighsData(htemp);
+        data.setRainfallData(ptemp);
+        l.onCityDataReceived(data);
     }
 
-    public void getCityDataByName(String name, int year) {
-        final BackendConnector outerThis = this;
-        JsonObjectRequest jsonRequest = new JsonObjectRequest
-                (Request.Method.GET, apibase + name, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Parse the returned JSON object here...
-                            System.out.println(response);
-                            YearlyCityData data = outerThis.parseHistoryData(response);
-                            for (BackendListener listener : listeners) {
-                                listener.onCityDataReceived(data);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-        this.requestQueue.add(jsonRequest);
-    }
-
-    public void getCityDataByID(int id, int year) {
-        final BackendConnector outerThis = this;
-        JsonObjectRequest jsonRequest = new JsonObjectRequest
-                (Request.Method.GET, apibase + id, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Parse the returned JSON object here...
-                            System.out.println(response);
-                            YearlyCityData data = outerThis.parseHistoryData(response);
-                            for (BackendListener listener : listeners) {
-                                listener.onCityDataReceived(data);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-        this.requestQueue.add(jsonRequest);
+    public void getWeatherByName(String name, final CurrentBackendListener listener) {
+        queue.add(new CustomRequest(apibase  + name, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray list = response.getJSONArray("list");
+                    JSONObject currentWeather = list.getJSONObject(0);
+                    JSONObject mainInfo = currentWeather.getJSONObject("main");
+                    JSONObject weather = currentWeather.getJSONArray("weather").getJSONObject(0);
+                    double tempCelcius = mainInfo.getDouble("temp") - 273.15;
+                    String description = weather.getString("description");
+                    listener.onCurrentDataReceived(new CurrentCityData(tempCelcius, description));
+                } catch (JSONException e) {
+                    Log.d("JSON Error", e.getMessage());
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("VolleyError", error.getMessage());
+            }
+        }));
     }
 
 }
